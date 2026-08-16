@@ -1,0 +1,18 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+
+export const dynamic = "force-dynamic";
+
+/** فحص صحة التطبيق وقاعدة البيانات — يُستخدم من Coolify healthcheck */
+export async function GET() {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    return NextResponse.json({
+      status: "up",
+      db: "up",
+      time: new Date().toISOString(),
+    });
+  } catch {
+    return NextResponse.json({ status: "degraded", db: "down" }, { status: 503 });
+  }
+}
