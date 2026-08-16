@@ -103,3 +103,14 @@ NODE_ENV=production
 - البذر آمن تمامًا: يعمل عند كل إقلاع ولا يستبدل أي بيانات عدّلتها من لوحة التحكم
 - التطبيق والقاعدة يجب أن يكونا على شبكة `coolify` نفسها (`connect_to_docker_network: true`)
 - الدومين بصيغة `https://` إلزامي لشهادة Let's Encrypt
+
+## 🌐 النسخة الحية
+
+| | |
+|---|---|
+| **الرابط** | https://doctor.169.58.65.43.sslip.io |
+| **اللوحة** | https://doctor.169.58.65.43.sslip.io/admin |
+| المستودع | github.com/MahmoudMody96/doctor-clinic |
+| Coolify | مشروع `Doctor-Clinic` — `doctor-web` + `doctor-db` (PostgreSQL 16) |
+
+**التحديث بعد أي تعديل:** `git push` ← Coolify بينشر تلقائيًا من فرع main (Webhook GitHub مفعل).
