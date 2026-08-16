@@ -10,6 +10,8 @@ const DAYS_COUNT = 12;
 
 interface StepDateProps {
   selectedDate: string | null;
+  /** أرقام أيام الأسبوع المقفولة (0=الأحد ... 6=السبت) */
+  offDays: number[];
   onSelect: (date: string) => void;
 }
 
@@ -17,13 +19,14 @@ function dayInfo(dateStr: string) {
   const d = new Date(dateStr + "T12:00:00");
   return {
     weekday: DAY_NAMES_AR[d.getDay()],
+    weekdayNum: d.getDay(),
     dayNum: d.getDate(),
     month: MONTHS_AR[d.getMonth()],
   };
 }
 
 /** الخطوة 2 — اختيار اليوم من تقويم الـ ١٢ يومًا القادمة */
-export default function StepDate({ selectedDate, onSelect }: StepDateProps) {
+export default function StepDate({ selectedDate, offDays, onSelect }: StepDateProps) {
   const days = useMemo(() => {
     const start = todayCairo();
     return Array.from({ length: DAYS_COUNT }, (_, i) => addDays(start, i));
@@ -34,25 +37,32 @@ export default function StepDate({ selectedDate, onSelect }: StepDateProps) {
     <div>
       <StepHeading
         title="اختر اليوم المناسب"
-        subtitle="متاح الحجز خلال الأيام الاثني عشر القادمة — وإذا كان اليوم الذي تختاره مغلقًا سنخبرك فورًا في الخطوة التالية."
+        subtitle="اختر يومًا من الأيام الاثني عشر القادمة — أيام إجازة العيادة معلَّمة «مغلق» ومطفأة مباشرة."
       />
 
       <div
-        role="radiogroup"
+        role="group"
         aria-label="اختر يوم الحجز"
         className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6"
       >
         {days.map((date, i) => {
           const info = dayInfo(date);
           const selected = date === selectedDate;
-          const disabled = date < today;
-          const badge = i === 0 ? "اليوم" : i === 1 ? "غدًا" : null;
+          const isOffDay = offDays.includes(info.weekdayNum);
+          const disabled = date < today || isOffDay;
+          const badge = isOffDay
+            ? "مغلق"
+            : i === 0
+              ? "اليوم"
+              : i === 1
+                ? "غدًا"
+                : null;
           return (
             <motion.button
               key={date}
               type="button"
-              role="radio"
-              aria-checked={selected}
+              aria-pressed={selected}
+              aria-disabled={disabled}
               disabled={disabled}
               onClick={() => onSelect(date)}
               initial={{ opacity: 0, y: 14 }}
@@ -72,7 +82,9 @@ export default function StepDate({ selectedDate, onSelect }: StepDateProps) {
                   className={`absolute -top-2.5 right-1/2 translate-x-1/2 whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-extrabold shadow ${
                     selected
                       ? "bg-white text-brand-700"
-                      : "bg-gold-400 text-ink-900"
+                      : isOffDay
+                    ? "bg-ink-200 text-ink-700"
+                    : "bg-gold-400 text-ink-900"
                   }`}
                 >
                   {badge}
@@ -107,7 +119,7 @@ export default function StepDate({ selectedDate, onSelect }: StepDateProps) {
 
       <p className="mt-5 flex items-center justify-center gap-1.5 text-center text-xs font-bold text-ink-400">
         <Info className="h-3.5 w-3.5 shrink-0 text-brand-500" />
-        أيام الإجازة أو المواعيد الممتلئة ستظهر رسالتها عند اختيار الوقت.
+        الأيام المعلَّمة «مغلق» هي أيام إجازة العيادة — اختر يوم عمل آخر.
       </p>
     </div>
   );

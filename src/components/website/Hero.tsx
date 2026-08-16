@@ -138,7 +138,7 @@ export default function Hero({ content }: { content: ContentMap }) {
             <div className="text-center lg:text-start">
               <dt className="sr-only">التقييم</dt>
               <dd className="flex items-center justify-center gap-1.5 font-display text-2xl font-black text-ink-900 sm:text-3xl lg:justify-start">
-                <Star className="h-5 w-5 fill-gold-400 text-gold-400" />
+                <Star className="h-5 w-5 fill-gold-600 text-gold-600" />
                 {rating.toFixed(1)}
               </dd>
               <dd className="mt-1 text-xs text-ink-600 sm:text-sm">
@@ -249,7 +249,7 @@ export default function Hero({ content }: { content: ContentMap }) {
             className="animate-float glass absolute -top-7 right-4 z-20 hidden items-center gap-2.5 rounded-2xl border border-white/70 px-4 py-3 shadow-card sm:flex"
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold-400/15">
-              <Star className="h-5 w-5 fill-gold-400 text-gold-400" />
+              <Star className="h-5 w-5 fill-gold-600 text-gold-600" />
             </span>
             <span>
               <span className="block font-display text-sm font-extrabold text-ink-900">

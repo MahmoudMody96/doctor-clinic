@@ -71,7 +71,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <Link
             href="/booking"
-            className="hidden items-center gap-2 rounded-full bg-gradient-to-l from-brand-600 to-brand-500 px-6 py-2.5 text-sm font-extrabold text-white shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 sm:inline-flex"
+            className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-l from-brand-800 to-brand-700 px-4 py-2.5 text-xs font-extrabold text-white shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 sm:gap-2 sm:px-6 sm:text-sm"
           >
             <CalendarCheck className="h-4 w-4" />
             احجز الآن
@@ -106,7 +106,7 @@ export default function Navbar() {
                   key={link.href}
                   href={href(link.href)}
                   onClick={() => setOpen(false)}
-                  initial={{ opacity: 0, x: 16 }}
+                  initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.05 + i * 0.05, duration: 0.25 }}
                   className="rounded-xl px-4 py-3 text-sm font-bold text-ink-800 transition-colors hover:bg-brand-50 hover:text-brand-700"

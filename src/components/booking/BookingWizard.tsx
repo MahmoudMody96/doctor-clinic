@@ -40,10 +40,20 @@ const NAV_BACK =
   "inline-flex items-center gap-2 rounded-full border-2 border-ink-200 bg-white px-6 py-2.5 text-sm font-extrabold text-ink-700 transition-all duration-300 hover:border-brand-400 hover:text-brand-700";
 
 const NAV_NEXT =
-  "inline-flex items-center gap-2 rounded-full bg-gradient-to-l from-brand-600 to-brand-500 px-8 py-3 text-sm font-extrabold text-white shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:brightness-100";
+  "inline-flex items-center gap-2 rounded-full bg-gradient-to-l from-brand-800 to-brand-700 px-8 py-3 text-sm font-extrabold text-white shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:brightness-100";
 
 /** المعالج الرئيسي — إدارة الحالة والتنقل وجلب البيانات عبر الخطوات الخمس */
-export default function BookingWizard({ whatsapp }: { whatsapp: string }) {
+export default function BookingWizard({
+  whatsapp,
+  offDays,
+  address,
+  mapUrl,
+}: {
+  whatsapp: string;
+  offDays: number[];
+  address: string;
+  mapUrl: string;
+}) {
   const searchParams = useSearchParams();
 
   const [step, setStep] = useState(1);
@@ -82,6 +92,7 @@ export default function BookingWizard({ whatsapp }: { whatsapp: string }) {
   const topRef = useRef<HTMLDivElement | null>(null);
   const skipFirstScroll = useRef(true);
   const deepLinkHandled = useRef(false);
+  const draftRestored = useRef(false);
 
   const selectedService = useMemo(
     () => services?.find((s) => s.id === serviceId) ?? null,
@@ -120,6 +131,49 @@ export default function BookingWizard({ whatsapp }: { whatsapp: string }) {
   useEffect(() => {
     void loadServices();
   }, [loadServices]);
+
+  /* ───────── حفظ مسودة الحجز واسترجاعها ───────── */
+
+  const DRAFT_KEY = "booking-draft";
+
+  // حفظ الاختيارات والبيانات أولًا بأول
+  useEffect(() => {
+    if (result) return;
+    try {
+      sessionStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ serviceId, date, time, form })
+      );
+    } catch {
+      /* تخزين غير متاح */
+    }
+  }, [serviceId, date, time, form, result]);
+
+  // استرجاع المسودة بعد تحميل الخدمات (تحقق أن الخدمة لازالت موجودة)
+  useEffect(() => {
+    if (draftRestored.current || !services) return;
+    draftRestored.current = true;
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const draft = JSON.parse(raw) as Partial<{
+        serviceId: number;
+        date: string;
+        time: string;
+        form: BookingFormState;
+      }>;
+      const svc = draft.serviceId
+        ? services.find((s) => s.id === draft.serviceId)
+        : undefined;
+      if (!svc || !draft.form?.name) return;
+      setServiceId(svc.id);
+      setDate(draft.date ?? null);
+      setForm(draft.form);
+      showToast("info", "استعدنا بياناتك السابقة — أكمل حجزك من حيث توقفت");
+    } catch {
+      /* مسودة تالفة */
+    }
+  }, [services, showToast]);
 
   /* ───────── رابط مباشر /booking?service=N ───────── */
 
@@ -284,6 +338,11 @@ export default function BookingWizard({ whatsapp }: { whatsapp: string }) {
       } | null;
 
       if (res.status === 201 && data?.ok && data.refCode && data.booking) {
+        try {
+          sessionStorage.removeItem("booking-draft");
+        } catch {
+          /* تجاهل */
+        }
         setResult({ refCode: data.refCode, booking: data.booking });
         return;
       }
@@ -335,6 +394,8 @@ export default function BookingWizard({ whatsapp }: { whatsapp: string }) {
           result={result}
           service={selectedService}
           whatsapp={whatsapp}
+          address={address}
+          mapUrl={mapUrl}
           onReset={handleReset}
         />
       ) : (
@@ -372,6 +433,7 @@ export default function BookingWizard({ whatsapp }: { whatsapp: string }) {
                 {step === 2 && (
                   <StepDate
                     selectedDate={date}
+                    offDays={offDays}
                     onSelect={(d) => {
                       setDate(d);
                       setTime(null);
@@ -422,7 +484,7 @@ export default function BookingWizard({ whatsapp }: { whatsapp: string }) {
                 السابق
               </button>
             ) : (
-              <p className="hidden text-xs font-bold text-ink-400 sm:block">
+              <p className="hidden text-xs font-bold text-ink-600 sm:block">
                 خطوة {toArabicDigits(1)} من {toArabicDigits(STEP_COUNT)}
               </p>
             )}
@@ -432,7 +494,7 @@ export default function BookingWizard({ whatsapp }: { whatsapp: string }) {
                 type="button"
                 onClick={handleNext}
                 disabled={!canNext && step !== 4}
-                className={NAV_NEXT}
+                className={`${NAV_NEXT} ${step === 4 && !formValid ? "opacity-70" : ""}`}
               >
                 التالي
                 <ArrowLeft className="h-4 w-4" />

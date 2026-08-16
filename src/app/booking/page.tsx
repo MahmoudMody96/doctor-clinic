@@ -5,6 +5,7 @@ import Navbar from "@/components/website/Navbar";
 import Footer from "@/components/website/Footer";
 import BookingWizard from "@/components/booking/BookingWizard";
 import { getContent } from "@/lib/content";
+import { prisma } from "@/lib/db";
 import type { ContentMap } from "@/types";
 
 /** ضمان جلب محتوى حديث من قاعدة البيانات في كل طلب */
@@ -69,10 +70,17 @@ export default async function BookingPage() {
   const rawContent = await getContent();
   const content: ContentMap = { ...CONTENT_DEFAULTS, ...rawContent };
 
+  // أيام الأسبوع المقفولة (لتعطيلها مباشرة في خطوة اختيار اليوم)
+  const offRules = await prisma.scheduleRule.findMany({
+    where: { isActive: false },
+    select: { dayOfWeek: true },
+  });
+  const offDays = offRules.map((r) => r.dayOfWeek);
+
   return (
     <>
       <Navbar />
-      <main className="relative overflow-hidden pb-24 pt-32 sm:pt-36">
+      <main id="main" className="relative overflow-hidden pb-24 pt-32 sm:pt-36">
         {/* زخارف خلفية ناعمة */}
         <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute -top-24 left-[15%] h-80 w-80 rounded-full bg-brand-100/70 blur-3xl" />
@@ -97,20 +105,40 @@ export default async function BookingPage() {
 
           <div className="mx-auto mt-10 max-w-4xl sm:mt-12">
             <Suspense fallback={<WizardFallback />}>
-              <BookingWizard whatsapp={content.whatsapp ?? "201012345678"} />
+              <BookingWizard
+                whatsapp={content.whatsapp ?? "201012345678"}
+                offDays={offDays}
+                address={content.address ?? ""}
+                mapUrl={content.map_url ?? "#"}
+              />
             </Suspense>
 
             <ul className="mx-auto mt-8 flex max-w-2xl flex-wrap items-center justify-center gap-x-8 gap-y-3">
               {TRUST_POINTS.map((point) => (
                 <li
                   key={point.label}
-                  className="flex items-center gap-2 text-xs font-bold text-ink-500"
+                  className="flex items-center gap-2 text-xs font-bold text-ink-600"
                 >
                   <point.icon className="h-4 w-4 text-brand-600" />
                   {point.label}
                 </li>
               ))}
             </ul>
+
+            <p className="mt-5 text-center text-xs text-ink-600">
+              تفضّل التواصل المباشر؟{" "}
+              <a
+                href={`https://wa.me/${content.whatsapp ?? "201012345678"}?text=${encodeURIComponent(
+                  "مرحبًا، أريد الاستفسار عن حجز موعد في العيادة"
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-extrabold text-emerald-700 underline decoration-emerald-300 underline-offset-4 transition-colors hover:text-emerald-800"
+              >
+                راسلنا على واتساب
+              </a>{" "}
+              وسنحجز لك بأنفسنا.
+            </p>
           </div>
         </div>
       </main>

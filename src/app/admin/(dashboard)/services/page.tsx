@@ -284,7 +284,7 @@ export default function AdminServicesPage() {
             type="button"
             onClick={() => load()}
             disabled={refreshing || loading}
-            className="btn-outline !px-5 !py-2.5 text-sm disabled:opacity-60"
+            className="btn-outline px-5! py-2.5! text-sm disabled:opacity-60"
           >
             <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
             تحديث
@@ -292,7 +292,7 @@ export default function AdminServicesPage() {
           <button
             type="button"
             onClick={openAdd}
-            className="btn-primary !px-5 !py-2.5 text-sm"
+            className="btn-primary px-5! py-2.5! text-sm"
           >
             <Plus className="h-4 w-4" />
             إضافة خدمة
@@ -543,7 +543,7 @@ export default function AdminServicesPage() {
             type="button"
             onClick={() => setEditing(null)}
             disabled={saving}
-            className="btn-outline !px-6 !py-2.5 text-sm !text-ink-600 !border-ink-200 hover:!bg-ink-50 disabled:opacity-50"
+            className="btn-outline px-6! py-2.5! text-sm text-ink-600! border-ink-200! hover:!bg-ink-50 disabled:opacity-50"
           >
             إلغاء
           </button>
@@ -551,7 +551,7 @@ export default function AdminServicesPage() {
             type="button"
             onClick={handleSaveModal}
             disabled={saving}
-            className="btn-primary !px-6 !py-2.5 text-sm disabled:opacity-70"
+            className="btn-primary px-6! py-2.5! text-sm disabled:opacity-70"
           >
             {saving ? (
               <Loader2 className="h-4 w-4 animate-spin" />

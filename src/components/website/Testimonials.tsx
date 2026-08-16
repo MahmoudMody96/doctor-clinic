@@ -33,7 +33,7 @@ function StarsRow() {
   return (
     <div className="flex items-center gap-1" aria-label="تقييم 5 من 5">
       {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className="h-4 w-4 fill-gold-400 text-gold-400" />
+        <Star key={i} className="h-4 w-4 fill-gold-600 text-gold-600" />
       ))}
     </div>
   );

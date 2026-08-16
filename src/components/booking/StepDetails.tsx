@@ -18,8 +18,7 @@ interface StepDetailsProps {
   onBlur: (field: "name" | "phone") => void;
 }
 
-const INPUT_BASE =
-  "input-base focus:outline-none focus:ring-2 focus:ring-brand-100";
+const INPUT_BASE = "input-base";
 
 /** الخطوة 4 — بيانات المريض مع ملخص جانبي للاختيارات */
 export default function StepDetails({
@@ -42,6 +41,11 @@ export default function StepDetails({
           title="بياناتك"
           subtitle="نحتاج بيانات بسيطة فقط لتأكيد حجزك والتواصل معك — بياناتك محمية ولن نشاركها مع أي طرف."
         />
+        <p className="-mt-3 mb-1 text-xs text-ink-600">
+          <a href="/privacy" className="font-bold text-brand-700 underline decoration-brand-300 underline-offset-4 hover:text-brand-800">
+            اطّلع على سياسة الخصوصية
+          </a>
+        </p>
 
         <div className="space-y-5">
           {/* الاسم */}
@@ -77,7 +81,7 @@ export default function StepDetails({
                 {errors.name}
               </motion.p>
             ) : (
-              <p className="mt-1.5 text-xs text-ink-400">
+              <p className="mt-1.5 text-xs text-ink-600">
                 سنناديك بهذا الاسم عند الاستقبال.
               </p>
             )}
@@ -118,7 +122,7 @@ export default function StepDetails({
                 {errors.phone}
               </motion.p>
             ) : (
-              <p className="mt-1.5 text-xs text-ink-400">
+              <p className="mt-1.5 text-xs text-ink-600">
                 مثال: 01012345678 — سنتواصل معك على هذا الرقم لتأكيد الموعد.
               </p>
             )}
@@ -129,7 +133,7 @@ export default function StepDetails({
             <label htmlFor="bk-notes" className="label-base flex items-center gap-1.5">
               <NotebookPen className="h-4 w-4 text-brand-600" />
               ملاحظات إضافية
-              <span className="text-[10px] font-medium text-ink-400">(اختياري)</span>
+              <span className="text-xs font-medium text-ink-600">(اختياري)</span>
             </label>
             <textarea
               id="bk-notes"
@@ -141,10 +145,10 @@ export default function StepDetails({
               className={`${INPUT_BASE} resize-none focus:border-brand-500`}
             />
             <div className="mt-1.5 flex items-center justify-between gap-3">
-              <p className="text-xs text-ink-400">
+              <p className="text-xs text-ink-600">
                 تساعد الملاحظات الطبيب على التحضير المسبق لزيارتك.
               </p>
-              <p className="shrink-0 text-[11px] font-bold tabular-nums text-ink-300">
+              <p className="shrink-0 text-xs font-bold tabular-nums text-ink-500">
                 {toArabicDigits(form.notes.length)} / {toArabicDigits(NOTES_MAX)}
               </p>
             </div>

@@ -214,17 +214,17 @@ export default function StepTime({
                         group.key === "morning" ? "text-gold-500" : "text-brand-600"
                       }`}
                     />
-                    <h4 className="text-sm font-extrabold text-ink-800">
+                    <h3 className="text-sm font-extrabold text-ink-800">
                       {group.title}
-                    </h4>
-                    <span className="rounded-full bg-ink-50 px-2 py-0.5 text-[10px] font-bold text-ink-500">
+                    </h3>
+                    <span className="rounded-full bg-ink-50 px-2 py-0.5 text-xs font-bold text-ink-600">
                       {slotsCountAr(group.slots.length)}
                     </span>
                     <span aria-hidden className="h-px flex-1 bg-ink-100" />
                   </header>
 
                   <div
-                    role="radiogroup"
+                    role="group"
                     aria-label={group.title}
                     className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 md:grid-cols-6"
                   >
@@ -234,16 +234,15 @@ export default function StepTime({
                         <motion.button
                           key={slot}
                           type="button"
-                          role="radio"
-                          aria-checked={selected}
+                          aria-pressed={selected}
                           onClick={() => onSelect(slot)}
                           initial={{ opacity: 0, scale: 0.9 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: i * 0.025, duration: 0.25, ease: "easeOut" }}
                           whileTap={{ scale: 0.94 }}
-                          className={`rounded-xl border-2 px-1 py-2.5 text-sm font-extrabold tabular-nums transition-all duration-200 ${
+                          className={`min-h-[44px] rounded-xl border-2 px-1 py-3 text-sm font-extrabold tabular-nums transition-all duration-200 ${
                             selected
-                              ? "border-transparent bg-gradient-to-b from-brand-600 to-brand-500 text-white shadow-glow"
+                              ? "border-transparent bg-gradient-to-b from-brand-800 to-brand-700 text-white shadow-glow"
                               : "border-ink-100 bg-white text-ink-700 hover:border-brand-400 hover:text-brand-700"
                           }`}
                         >

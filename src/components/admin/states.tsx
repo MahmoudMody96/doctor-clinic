@@ -73,7 +73,7 @@ export function ErrorState({
         <button
           type="button"
           onClick={onRetry}
-          className="btn-primary mt-6 !px-6 !py-2.5 text-sm"
+          className="btn-primary mt-6 px-6! py-2.5! text-sm"
         >
           <RefreshCw className="h-4 w-4" />
           إعادة المحاولة

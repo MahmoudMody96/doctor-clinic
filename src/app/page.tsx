@@ -53,7 +53,7 @@ export default async function Home() {
   return (
     <>
       <Navbar />
-      <main>
+      <main id="main">
         <Hero content={content} />
         <Services services={services} />
         <About content={content} />
@@ -64,6 +64,25 @@ export default async function Home() {
         <Contact content={content} />
       </main>
       <Footer content={content} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Dentist",
+            name: `عيادة ${content.doctor_name}`,
+            description: content.hero_subtitle,
+            telephone: content.phone,
+            priceRange: "$",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: content.address,
+              addressCountry: "EG",
+            },
+            openingHours: content.working_hours_text,
+          }),
+        }}
+      />
     </>
   );
 }

@@ -37,7 +37,10 @@ export default function CtaBanner() {
           variants={fadeUp}
           className="relative font-display text-3xl font-black text-white sm:text-4xl"
         >
-          ابتسامتك تستحق <span className="text-gold-400">الأفضل</span>
+          ابتسامتك تستحق{" "}
+          <span className="text-white underline decoration-gold-400 decoration-4 underline-offset-8">
+            الأفضل
+          </span>
         </motion.h2>
 
         <motion.p

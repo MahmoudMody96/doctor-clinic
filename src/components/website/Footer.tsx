@@ -169,12 +169,20 @@ export default function Footer({ content }: { content: ContentMap }) {
             © {year} عيادة {content.doctor_name ?? "د. أحمد الشريف"} — جميع
             الحقوق محفوظة
           </p>
-          <Link
-            href="/admin"
-            className="text-ink-600 transition-colors hover:text-brand-400"
-          >
-            دخول الإدارة
-          </Link>
+          <div className="flex items-center gap-5">
+            <Link
+              href="/privacy"
+              className="text-ink-300 transition-colors hover:text-brand-300"
+            >
+              سياسة الخصوصية
+            </Link>
+            <Link
+              href="/admin"
+              className="text-ink-300 transition-colors hover:text-brand-300"
+            >
+              دخول الإدارة
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

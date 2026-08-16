@@ -130,7 +130,7 @@ export default function StepService({
 
       {!loading && !error && services && services.length > 0 && (
         <div
-          role="radiogroup"
+          role="group"
           aria-label="اختر الخدمة"
           className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
         >
@@ -140,8 +140,8 @@ export default function StepService({
               <motion.button
                 key={service.id}
                 type="button"
-                role="radio"
-                aria-checked={selected}
+                aria-pressed={selected}
+                aria-label={`${service.name} — ${formatPrice(service.price)} — ${durationLabelAr(service.durationMin)}`}
                 onClick={() => onSelect(service)}
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -176,7 +176,7 @@ export default function StepService({
                 <h3 className="mt-4 font-display text-base font-extrabold text-ink-900">
                   {service.name}
                 </h3>
-                <p className="mt-1.5 line-clamp-2 min-h-10 text-[13px] leading-6 text-ink-500">
+                <p className="mt-1.5 line-clamp-2 min-h-10 text-[13px] leading-6 text-ink-600">
                   {service.description}
                 </p>
 
@@ -184,7 +184,7 @@ export default function StepService({
                   <span className="font-display text-base font-extrabold text-brand-700">
                     {formatPrice(service.price)}
                   </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-ink-50 px-2.5 py-1 text-[11px] font-bold text-ink-600">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-ink-50 px-2.5 py-1 text-xs font-bold text-ink-600">
                     <Hourglass className="h-3.5 w-3.5 text-brand-500" />
                     {durationLabelAr(service.durationMin)}
                   </span>

@@ -102,7 +102,7 @@ export default function AdminDashboardLayout({
               href={item.href}
               className={`group relative flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition-all duration-300 ${
                 active
-                  ? "bg-gradient-to-l from-brand-600 to-brand-500 text-white shadow-glow"
+                  ? "bg-gradient-to-l from-brand-800 to-brand-700 text-white shadow-glow"
                   : "text-ink-200 hover:bg-white/5 hover:text-white"
               }`}
             >

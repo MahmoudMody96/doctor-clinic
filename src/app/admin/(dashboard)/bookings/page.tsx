@@ -185,7 +185,7 @@ export default function AdminBookingsPage() {
           type="button"
           onClick={() => load()}
           disabled={refreshing || loading}
-          className="btn-outline !px-5 !py-2.5 text-sm disabled:opacity-60"
+          className="btn-outline px-5! py-2.5! text-sm disabled:opacity-60"
         >
           <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
           تحديث القائمة

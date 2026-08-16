@@ -5,10 +5,12 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   CalendarDays,
+  CalendarPlus,
   Check,
   Clock,
   Copy,
   Home,
+  MapPin,
   RotateCcw,
   Sparkles,
   Wallet,
@@ -43,7 +45,7 @@ function DetailRow({
         {icon}
       </span>
       <div className="min-w-0">
-        <p className="text-[11px] font-bold text-ink-400">{label}</p>
+        <p className="text-xs font-bold text-ink-600">{label}</p>
         <p className="truncate text-sm font-extrabold text-ink-900">{value}</p>
       </div>
     </div>
@@ -55,14 +57,41 @@ export default function SuccessScreen({
   result,
   service,
   whatsapp,
+  address,
+  mapUrl,
   onReset,
 }: {
   result: BookingResult;
   service: ServiceDTO | null;
   whatsapp: string;
+  address: string;
+  mapUrl: string;
   onReset: () => void;
 }) {
   const [copied, setCopied] = useState(false);
+
+  /** ملف تقويم ICS لتنبيه الموعد (بلا مكتبات) */
+  function buildIcsHref() {
+    const day = result.booking.date.replace(/-/g, "");
+    const [h, m] = result.booking.time.split(":").map(Number);
+    const end = new Date(2000, 0, 1, h, m + (service?.durationMin ?? 30));
+    const endStr =
+      String(end.getHours()).padStart(2, "0") + String(end.getMinutes()).padStart(2, "0");
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//ElSherif Clinic//AR",
+      "BEGIN:VEVENT",
+      `UID:${result.refCode}@elsherif-clinic`,
+      `DTSTART:${day}T${result.booking.time.replace(":", "")}00`,
+      `DTEND:${day}T${endStr}00`,
+      `SUMMARY:${result.booking.serviceName} — عيادة الشريف`,
+      `LOCATION:${address}`,
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ].join("\r\n");
+    return "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
+  }
 
   async function copyRef() {
     try {
@@ -243,15 +272,39 @@ export default function SuccessScreen({
                 value={formatPrice(service.price)}
               />
             )}
+            {address && (
+              <a
+                href={mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 rounded-2xl border border-ink-100 bg-ink-50/60 px-4 py-3.5 transition-colors hover:border-brand-300 hover:bg-brand-50/60"
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-brand-600 shadow-card">
+                  <MapPin className="h-4.5 w-4.5" />
+                </span>
+                <span className="min-w-0 text-right">
+                  <span className="block text-xs font-bold text-ink-600">العنوان — افتح على الخريطة</span>
+                  <span className="block truncate text-sm font-extrabold text-ink-900">{address}</span>
+                </span>
+              </a>
+            )}
           </div>
 
-          <p className="mt-5 text-center text-xs leading-6 text-ink-400">
+          <p className="mt-5 text-center text-xs leading-6 text-ink-600">
             احتفظ بالرقم المرجعي — ستحتاجه عند الاستقبال أو لأي استفسار عن
             حجزك. ولتعديل الموعد أو إلغائه تواصل معنا عبر واتساب.
           </p>
 
           {/* الأزرار */}
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <a
+              href={buildIcsHref()}
+              download={`${result.refCode}.ics`}
+              className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-brand-600 bg-white px-6 py-3.5 text-sm font-extrabold text-brand-700 transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-50"
+            >
+              <CalendarPlus className="h-4.5 w-4.5" />
+              أضِف إلى تقويمك
+            </a>
             <a
               href={waHref}
               target="_blank"
