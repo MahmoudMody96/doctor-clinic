@@ -2,6 +2,8 @@
 
 موقع احترافي لعيادة طب وتجميل الأسنان مع نظام حجز إلكتروني كامل ولوحة تحكم إدارية — عربي بالكامل (RTL).
 
+> **النسخة الحية:** https://doctor.169.58.65.43.sslip.io · اللوحة: `/admin`
+
 ## ✨ المميزات
 
 ### الموقع العام
@@ -10,74 +12,129 @@
 - آراء المرضى، الأسئلة الشائعة، معلومات التواصل
 - نظام حجز إلكتروني من 5 خطوات (خدمة ← يوم ← وقت ← بيانات ← تأكيد)
 - فحص التوفر اللحظي مع منع الحجز المزدوج ومراعاة مدة كل خدمة
+- رابط مباشر `/booking?service=N` يختار الخدمة تلقائيًا
 
 ### لوحة التحكم `/admin`
-- تسجيل دخول محمي (JWT + httpOnly cookie)
-- نظرة عامة بإحصائيات ورسوم بيانية (Recharts)
-- إدارة الحجوزات (تأكيد / إتمام / إلغاء / حذف + بحث وفلترة)
-- إدارة مواعيد العمل الأسبوعية والتواريخ المغلقة (إجازات)
-- إدارة الخدمات والأسعار
-- تعديل محتوى الموقع (بيانات الطبيب، التواصل، السوشيال)
+- تسجيل دخول محمي (JWT في httpOnly cookie + middleware على كل المسارات الإدارية)
+- نظرة عامة بإحصائيات ورسوم بيانية (Recharts): آخر 14 يومًا، أكثر الخدمات، الإيرادات
+- إدارة الحجوزات (تأكيد / إتمام / إلغاء / حذف + بحث بالاسم/الهاتف/الكود وفلترة)
+- إدارة مواعيد العمل الأسبوعية (بفترة راحة يومية) + التواريخ المغلقة (إجازات)
+- إدارة الخدمات والأسعار (تعطيل بدل الحذف إذا وُجدت حجوزات مرتبطة)
+- تعديل محتوى الموقع نفسه (اسم الطبيب، نصوص الرئيسية، أرقام التواصل، السوشيال)
 
 ## 🛠️ التقنيات
 
 | الطبقة | التقنية |
 |---|---|
 | الواجهة | Next.js 15 (App Router) + React 19 + TypeScript |
-| التنسيق | Tailwind CSS v4 |
+| التنسيق | Tailwind CSS v4 (نظام تصميم كامل في globals.css) |
 | الأنيميشن | Framer Motion |
 | الرسوم البيانية | Recharts |
-| قاعدة البيانات | SQLite + Prisma ORM |
+| قاعدة البيانات | Prisma ORM — SQLite للتطوير، PostgreSQL للإنتاج |
 | المصادقة | jose (JWT) + bcryptjs |
+| التحقق | Zod على كل مدخلات الـ API |
 
-## 🚀 التشغيل
+## 📦 سكربتات npm
+
+| الأمر | الوظيفة |
+|---|---|
+| `npm run dev` | تشغيل التطوير محليًا (SQLite) |
+| `npm run build` / `start` | بناء وتشغيل عادي |
+| `npm run build:prod` | توليد Prisma من schema الإنتاج + بناء (يستخدمه Coolify) |
+| `npm run start:prod` | مزامنة الجداول + بذر آمن + تشغيل (يستخدمه Coolify) |
+| `npm run db:push` | مزامنة جداول SQLite المحلية |
+| `npm run db:seed` | بذر آمن (انظر «البذر الآمن» تحت) |
+
+## 🚀 التشغيل محليًا
 
 ```bash
 npm install
-npx prisma migrate dev     # إنشاء قاعدة البيانات
-npx tsx prisma/seed.ts     # بيانات تجريبية (اختياري)
-npm run dev                # http://localhost:3000
+npx prisma migrate dev        # إنشاء قاعدة SQLite المحلية (prisma/dev.db)
+npm run db:push               # أو مزامنة مباشرة
+npm run dev                   # http://localhost:3000
 ```
 
-## 🔑 بيانات الدخول للوحة التحكم
+**بيانات دخول التطوير المحلي:** `admin` / `admin123` (افتراضيات `ADMIN_USERNAME/ADMIN_PASSWORD`)
 
-```
-اسم المستخدم: admin
-كلمة المرور:  admin123
-```
-
-> ⚠️ غيّرها قبل النشر الفعلي (جدول Admin في قاعدة البيانات — كلمة المرور مشفرة bcrypt).
+> كلمة مرور الإنتاج **موثقة فقط في متغيرات بيئة Coolify** — لا تضع أي أسرار في هذا المستودع (عام).
 
 ## 📁 هيكل المشروع
 
 ```
 src/
 ├── app/
-│   ├── page.tsx              # الصفحة الرئيسية
-│   ├── booking/              # نظام الحجز
-│   ├── admin/                # لوحة التحكم (محمية بـ middleware)
-│   └── api/                  # مسارات API
+│   ├── page.tsx              # الصفحة الرئيسية (RSC — تجلب من القاعدة مباشرة)
+│   ├── booking/              # نظام الحجز (معالج 5 خطوات)
+│   ├── admin/
+│   │   ├── login/            # صفحة الدخول
+│   │   └── (dashboard)/      # اللوحة + layout السايدبار (محمية بـ middleware)
+│   └── api/                  # مسارات API (انظر الجدول التالي)
 ├── components/
 │   ├── website/              # أقسام الموقع العام
 │   ├── booking/              # مكونات الحجز
 │   └── admin/                # مكونات لوحة التحكم
-├── lib/                      # db, auth, availability, utils
-└── types/                    # الأنواع المشتركة
-prisma/                       # schema + seed
+├── lib/
+│   ├── db.ts                 # عميل Prisma (singleton)
+│   ├── jwt.ts / auth.ts      # إنشاء/التحقق من الجلسات + حماية المسارات
+│   ├── availability.ts       # محرك حساب المواعيد المتاحة
+│   └── utils.ts              # مساعدات عربية (تواريخ، هواتف، حالات)
+├── types/                    # الأنواع المشتركة
+└── middleware.ts             # حماية /admin و /api/admin
+prisma/
+├── schema.prisma             # SQLite — التطوير المحلي
+├── schema.prod.prisma        # PostgreSQL — الإنتاج
+├── migrations/               # ترحيلات التطوير المحلي
+└── seed.mjs                  # البذر الآمن (تشغيل وإنتاج)
 ```
+
+## 🔌 مسارات الـ API
+
+| المسار | النوع | الوصف |
+|---|---|---|
+| `/api/health` | GET عام | فحص الصحة + اتصال القاعدة (يستخدمه Coolify) |
+| `/api/services` | GET عام | الخدمات النشطة |
+| `/api/availability?date=&serviceId=` | GET عام | المواعيد المتاحة ليوم وخدمة |
+| `/api/bookings` | POST عام | إنشاء حجز (تحقق Zod + فحص توفر) |
+| `/api/auth/login` / `logout` / `me` | POST/GET | جلسات الأدمن |
+| `/api/admin/stats` | GET محمي | كل إحصائيات اللوحة |
+| `/api/admin/bookings` (+`/[id]`) | GET/PATCH/DELETE | إدارة الحجوزات |
+| `/api/admin/schedule` (+`/blocked`) | GET/PUT/POST/DELETE | مواعيد العمل والإجازات |
+| `/api/admin/services` (+`/[id]`) | GET/POST/PATCH/DELETE | الخدمات |
+| `/api/admin/content` | GET/PUT | محتوى الموقع |
 
 ## 🧠 منطق المواعيد
 
-- كل خدمة لها مدة جلسة خاصة (30-90 دقيقة)
+- كل خدمة لها مدة جلسة خاصة (30–90 دقيقة) والخطوة 30 دقيقة
 - المواعيد المتاحة = مواعيد العمل − فترة الراحة − الحجوزات القائمة − الماضي
-- لا يمكن حجز نفس الفترة مرتين (حتى لخدمات مختلفة المدة)
-- حد أدنى ساعة قبل موعد نفس اليوم
+- لا يمكن حجز فترة متعارضة حتى لخدمات مختلفة المدة (حساب تداخل فترات فعلي)
+- حد أدنى ساعة قبل موعد نفس اليوم · التوقيت بتوقيت القاهرة
+- الحجوزات الملغاة لا تحجب المعاد (الحجز المزدوج يُرفض 409 برسالة عربية)
+
+## 🌱 البذر الآمن (seed.mjs)
+
+يعمل عند كل إقلاع في الإنتاج (ضمن `start:prod`) **دون لمس أي بيانات موجودة**:
+- الأدمن: يُنشأ فقط إن لم يوجد (من `ADMIN_USERNAME/ADMIN_PASSWORD`)
+- مواعيد الأسبوع والمحتوى الافتراضي: upsert بمفاتيح ثابتة — لا يستبدل قيمًا عدلتها من اللوحة
+- الخدمات: تُزرع فقط لجدول فارغ
+- حجوزات تجريبية: فقط مع `SEED_DEMO=true` وجدول حجوزات فارغ
+
+**تغيير كلمة مرور الأدمن في الإنتاج:** عدّل `ADMIN_PASSWORD` في envs بتاعة Coolify ثم امسح صف الأدمن من القاعدة (سيُنشأ من جديد عند الإقلاع) — أو من psql مباشرة (bcrypt hash).
+
+## 📝 ملاحظات بيئة التطوير (ويندوز)
+
+- مجلد المشروع الفعلي بمسار عربي (`موقع طبيب جديد/clinic`) وبعض الأدوات (Prisma CLI مثلًا) تفشل معه.
+- **الحل:** Junction بمسار إنجليزي `D:\MAHMOOD\projects\doctor-clinic` يشاور على نفس المجلد — شغّل كل الأوامر من هنا.
 
 ---
 
-## 🚢 النشر على Coolify (الإنتاج — PostgreSQL)
+## 🚢 النشر على Coolify (الإنتاج)
 
-النسخة الإنتاجية تستخدم `prisma/schema.prod.prisma` (PostgreSQL) بدل SQLite المحلية.
+| | |
+|---|---|
+| **الرابط** | https://doctor.169.58.65.43.sslip.io |
+| **اللوحة** | https://doctor.169.58.65.43.sslip.io/admin |
+| المستودع | github.com/MahmoudMody96/doctor-clinic (فرع main) |
+| Coolify | مشروع `Doctor-Clinic` — `doctor-web` + `doctor-db` (PostgreSQL 16) |
 
 **إعدادات التطبيق في Coolify:**
 
@@ -86,35 +143,16 @@ prisma/                       # schema + seed
 | Build Pack | Nixpacks |
 | Build Command | `npm run build:prod` |
 | Start Command | `npm run start:prod` |
-| Health Check Path | `/api/health` |
-| Health Check Host | `127.0.0.1` |
+| Health Check | `/api/health` على `127.0.0.1` (مصيدة IPv6 في Alpine) |
+| الشبكة | `connect_to_docker_network: true` (شبكة coolify — يرى القاعدة) |
 
-**متغيرات البيئة المطلوبة:**
-
-```
-DATABASE_URL=postgresql://user:pass@<db-container>:5432/clinic
-AUTH_SECRET=<مفتاح عشوائي طويل>
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=<كلمة مرور قوية>
-NODE_ENV=production
-```
-
-- `SEED_DEMO=true` اختياري لزرع حجوزات تجريبية (لجدول فارغ فقط)
-- البذر آمن تمامًا: يعمل عند كل إقلاع ولا يستبدل أي بيانات عدّلتها من لوحة التحكم
-- التطبيق والقاعدة يجب أن يكونا على شبكة `coolify` نفسها (`connect_to_docker_network: true`)
-- الدومين بصيغة `https://` إلزامي لشهادة Let's Encrypt
-
-## 🌐 النسخة الحية
-
-| | |
-|---|---|
-| **الرابط** | https://doctor.169.58.65.43.sslip.io |
-| **اللوحة** | https://doctor.169.58.65.43.sslip.io/admin |
-| المستودع | github.com/MahmoudMody96/doctor-clinic |
-| Coolify | مشروع `Doctor-Clinic` — `doctor-web` + `doctor-db` (PostgreSQL 16) |
+**متغيرات البيئة في Coolify:** `DATABASE_URL` (postgresql داخل شبكة coolify)، `AUTH_SECRET`، `ADMIN_USERNAME`، `ADMIN_PASSWORD`، `NODE_ENV=production`، `SEED_DEMO=true`
 
 **التحديث بعد أي تعديل:** `git push` ثم نشر يدوي — زر Deploy في Coolify، أو عبر الـ API:
 
 ```bash
-curl -X POST "$COOLIFY_API_URL/applications/pf1d2jqaje9y1pw8wb296ast/start" -H "Authorization: Bearer $COOLIFY_ACCESS_TOKEN"
+curl -X POST "$COOLIFY_API_URL/applications/pf1d2jqaje9y1pw8wb296ast/start" \
+  -H "Authorization: Bearer $COOLIFY_ACCESS_TOKEN"
 ```
+
+> 💡 **نسخة احتياطية:** `doctor-db` حاليًا بدون backups — قبل استقبال مرضى حقيقيين فعّل النسخ من Coolify (نمط templets-db: كل 6 ساعات).
