@@ -113,4 +113,8 @@ NODE_ENV=production
 | المستودع | github.com/MahmoudMody96/doctor-clinic |
 | Coolify | مشروع `Doctor-Clinic` — `doctor-web` + `doctor-db` (PostgreSQL 16) |
 
-**التحديث بعد أي تعديل:** `git push` ← Coolify بينشر تلقائيًا من فرع main (Webhook GitHub مفعل).
+**التحديث بعد أي تعديل:** `git push` ثم نشر يدوي — زر Deploy في Coolify، أو عبر الـ API:
+
+```bash
+curl -X POST "$COOLIFY_API_URL/applications/pf1d2jqaje9y1pw8wb296ast/start" -H "Authorization: Bearer $COOLIFY_ACCESS_TOKEN"
+```
