@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { animate, motion, useInView } from "framer-motion";
 import { Award, GraduationCap, Star } from "lucide-react";
 import type { ContentMap } from "@/types";
@@ -61,13 +62,6 @@ const CREDENTIALS = [
 
 export default function About({ content }: { content: ContentMap }) {
   const doctorName = content.doctor_name ?? "د. أحمد الشريف";
-  const initials =
-    doctorName
-      .split(" ")
-      .filter((w) => w.length > 1 && !w.includes("."))
-      .map((w) => w[0])
-      .slice(0, 2)
-      .join("") || "أ";
 
   const experience = toNumber(content.experience_years, 15);
   const patients = toNumber(content.patients_count, 12000);
@@ -110,8 +104,8 @@ export default function About({ content }: { content: ContentMap }) {
             className="absolute inset-4 rounded-[2.5rem] bg-brand-500/20 blur-2xl"
           />
           <div className="relative rounded-[2.5rem] border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
-            {/* التجسيد الرمزي للطبيب */}
-            <div className="relative mx-auto flex h-44 w-44 items-center justify-center">
+            {/* صورة الطبيب — استبدل الملف public/images/doctor.jpg بالصورة الرسمية */}
+            <div className="relative mx-auto h-48 w-48">
               <span
                 aria-hidden
                 className="animate-pulse-ring absolute inset-0 rounded-full bg-brand-500/40"
@@ -124,13 +118,14 @@ export default function About({ content }: { content: ContentMap }) {
                 aria-hidden
                 className="absolute -inset-7 rounded-full border border-brand-400/15"
               />
-              <span
-                aria-hidden
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-400 to-brand-700 shadow-glow"
+              <Image
+                src="/images/doctor.jpg"
+                alt={`${doctorName} — ${content.doctor_title ?? "استشاري طب وتجميل الأسنان"}`}
+                width={192}
+                height={192}
+                priority={false}
+                className="animate-float relative h-48 w-48 rounded-full object-cover shadow-glow ring-2 ring-brand-400/60"
               />
-              <span className="animate-float relative font-display text-6xl font-black text-white drop-shadow-lg">
-                {initials}
-              </span>
             </div>
 
             <div className="mt-6 text-center">

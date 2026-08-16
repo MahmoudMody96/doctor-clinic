@@ -6,6 +6,7 @@ import Hero from "@/components/website/Hero";
 import Services from "@/components/website/Services";
 import About from "@/components/website/About";
 import WhyUs from "@/components/website/WhyUs";
+import BeforeAfter from "@/components/website/BeforeAfter";
 import Testimonials from "@/components/website/Testimonials";
 import Faq from "@/components/website/Faq";
 import CtaBanner from "@/components/website/CtaBanner";
@@ -58,6 +59,7 @@ export default async function Home() {
         <Services services={services} />
         <About content={content} />
         <WhyUs />
+        <BeforeAfter />
         <Testimonials />
         <Faq />
         <CtaBanner />

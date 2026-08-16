@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import {
   CalendarCheck,
@@ -97,6 +98,35 @@ export default function Contact({ content }: { content: ContentMap }) {
           highlight="في أي وقت"
           subtitle="فريقنا جاهز للرد على استفساراتك وحجز موعدك — اختر طريقة التواصل الأنسب لك."
         />
+
+        {/* من داخل العيادة — استبدل ملفات public/images/clinic-*.jpg بصورك */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+          className="mt-10 grid grid-cols-3 gap-3 sm:gap-4"
+        >
+          {[
+            { src: "/images/clinic-1.jpg", alt: "غرفة العلاج داخل العيادة" },
+            { src: "/images/clinic-2.jpg", alt: "الطبيب أثناء علاج أحد المرضى" },
+            { src: "/images/clinic-3.jpg", alt: "أدوات وتجهيزات العيادة المعقمة" },
+          ].map((photo) => (
+            <motion.div
+              key={photo.src}
+              variants={fadeUp}
+              className="relative overflow-hidden rounded-2xl border border-ink-100 shadow-card"
+            >
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                width={400}
+                height={300}
+                className="h-36 w-full object-cover transition-transform duration-500 hover:scale-105 sm:h-48"
+              />
+            </motion.div>
+          ))}
+        </motion.div>
 
         <motion.div
           variants={staggerContainer}
