@@ -14,7 +14,7 @@ const tajawal = Tajawal({
 });
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://doctor.169.58.65.43.sslip.io";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://doctor.aidy.site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

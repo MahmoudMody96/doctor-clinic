@@ -2,7 +2,7 @@
 
 موقع احترافي لعيادة طب وتجميل الأسنان مع نظام حجز إلكتروني كامل ولوحة تحكم إدارية — عربي بالكامل (RTL).
 
-> **النسخة الحية:** https://doctor.169.58.65.43.sslip.io · اللوحة: `/admin`
+> **النسخة الحية:** https://doctor.aidy.site (ودومين احتياطي: https://doctor.aidy.site (احتياطي: https://doctor.169.58.65.43.sslip.io)) · اللوحة: `/admin`
 
 ## ✨ المميزات
 
@@ -148,8 +148,8 @@ prisma/
 
 | | |
 |---|---|
-| **الرابط** | https://doctor.169.58.65.43.sslip.io |
-| **اللوحة** | https://doctor.169.58.65.43.sslip.io/admin |
+| **الرابط** | https://doctor.aidy.site (احتياطي: https://doctor.169.58.65.43.sslip.io) |
+| **اللوحة** | https://doctor.aidy.site (احتياطي: https://doctor.169.58.65.43.sslip.io)/admin |
 | المستودع | github.com/MahmoudMody96/doctor-clinic (فرع main) |
 | Coolify | مشروع `Doctor-Clinic` — `doctor-web` + `doctor-db` (PostgreSQL 16) |
 
